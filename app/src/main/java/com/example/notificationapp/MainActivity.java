@@ -3,6 +3,8 @@ package com.example.notificationapp;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CHANNAL_ID = "Notification Id";
     private static final int NOTIFICATION_ID = 100;
+    private static final int REQ_CODE = 120;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +34,46 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        Drawable drawable2 = ResourcesCompat.getDrawable(getResources(),R.drawable.message,null);
+        BitmapDrawable bitmapDrawable2 = (BitmapDrawable) drawable2;
+        assert bitmapDrawable2 != null;
+        Bitmap bitmap2 = bitmapDrawable2.getBitmap();
+
+
+
         Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.message,null);
         BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
         assert bitmapDrawable != null;
         Bitmap largeIcon = bitmapDrawable.getBitmap();
 
+        //Big picture style
+        Notification.BigPictureStyle bigPictureStyle = new Notification.BigPictureStyle()
+                .bigPicture(((BitmapDrawable) (ResourcesCompat.getDrawable(getResources(),R.drawable.jpg_img,null))).getBitmap())
+                .bigLargeIcon(largeIcon)
+                .setBigContentTitle("Big Content Title..")
+                .setSummaryText("Hello Im the Summary Text of the Drag Notification content. That is.......");
+
+        //Inbox style
+        Notification.InboxStyle inboxStyle = new Notification.InboxStyle()
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .addLine("A")
+                .setBigContentTitle("InboxStyle Big Content Style")
+                .setSummaryText("Inbox Summary Text ");              //Not show in the Notification, its support below the 8 version Of Android OS
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+
+        Intent intent = new Intent(getApplicationContext(), PendingIntentActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,REQ_CODE,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -47,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setSubText("You have got new message from Ankit Path")
                     .setChannelId(CHANNAL_ID)
+                     .setContentIntent(pendingIntent)
+                     .setStyle(inboxStyle)
+                   .setOngoing(true)
                     .build();
 
              notificationManager.createNotificationChannel(new NotificationChannel(CHANNAL_ID,"Notification Id",NotificationManager.IMPORTANCE_HIGH));
@@ -57,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
                     .setContentTitle("New Message")
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setSubText("You have got new message from Ankit Path")
+                    .setContentIntent(pendingIntent)
+                    .setStyle(inboxStyle)
+                    .setOngoing(true)
                     .build();
         }
 
