@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.PendingIntentCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -34,16 +35,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Drawable drawable2 = ResourcesCompat.getDrawable(getResources(),R.drawable.message,null);
-        BitmapDrawable bitmapDrawable2 = (BitmapDrawable) drawable2;
-        assert bitmapDrawable2 != null;
-        Bitmap bitmap2 = bitmapDrawable2.getBitmap();
-
-
-
         Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.message,null);
         BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-        assert bitmapDrawable != null;
         Bitmap largeIcon = bitmapDrawable.getBitmap();
 
         //Big picture style
@@ -73,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), PendingIntentActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,REQ_CODE,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+      //  PendingIntent pendingIntent = PendingIntent.getActivity(this,REQ_CODE,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent pendingIntentCompat = PendingIntentCompat.getActivity(this,REQ_CODE,intent, Intent.FILL_IN_DATA,true);
 
         Notification notification;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -83,9 +78,10 @@ public class MainActivity extends AppCompatActivity {
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setSubText("You have got new message from Ankit Path")
                     .setChannelId(CHANNAL_ID)
-                     .setContentIntent(pendingIntent)
-                     .setStyle(inboxStyle)
-                   .setOngoing(true)
+                    .setContentIntent(pendingIntentCompat)
+                    .setStyle(bigPictureStyle)
+                   .setOngoing(false)
+                     .setAutoCancel(false)
                     .build();
 
              notificationManager.createNotificationChannel(new NotificationChannel(CHANNAL_ID,"Notification Id",NotificationManager.IMPORTANCE_HIGH));
@@ -96,9 +92,10 @@ public class MainActivity extends AppCompatActivity {
                     .setContentTitle("New Message")
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setSubText("You have got new message from Ankit Path")
-                    .setContentIntent(pendingIntent)
-                    .setStyle(inboxStyle)
-                    .setOngoing(true)
+                   .setContentIntent(pendingIntentCompat)
+                    .setStyle(bigPictureStyle)
+                    .setOngoing(false)
+                    .setAutoCancel(false)
                     .build();
         }
 
